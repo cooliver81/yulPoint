@@ -80,7 +80,7 @@ yawns = 0
 yawn_status = False
 
 start = datetime
-end = datetime
+end = 0
 while True:
     ret, frame = cap.read()
     image_landmarks, lip_distance = mouth_open(frame)
@@ -105,13 +105,12 @@ while True:
     if prev_yawn_status == True and yawn_status == False:
         yawns += 1
         start = datetime.now()#.timestamp()
-        if end != 0 and end.total_seconds() - start.total_seconds() < 60.0:
-            print(start, end, abs(end.total_seconds() - start.total_seconds()))
+        if end != 0 and abs(end.minute - start.minute) < 1:
             n.show_toast("You keep yawning!", "Coffee? :^)", duration=5)
         end = datetime.now()#.timestamp()
 
     # cv2.imshow('Live Landmarks', image_landmarks)
-    cv2.imshow('Yawn Detection', frame)
+    #cv2.imshow('Yawn Detection', frame)
 
     if cv2.waitKey(1) == 13:  # 13 is the Enter Key
         break
