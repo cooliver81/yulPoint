@@ -1,16 +1,22 @@
 import cv2
 import dlib
 import numpy as np
+import sqlite3
 from datetime import datetime
+import time
 from win10toast import ToastNotifier
 
+# Notifications
 n = ToastNotifier()
-# n.show_toast("You keep yawning!", "Coffee? :^)", duration=10,)
+
+# Database
+conn = sqlite3.connect('data.db')
+cur = conn.cursor()
+cur.execute('CREATE TABLE IF NOT EXISTS data (Event VARCHAR, Time VARCHAR)')
+conn.commit()
 
 PREDICTOR_PATH = "shape_predictor_68_face_landmarks.dat"
 predictor = dlib.shape_predictor(PREDICTOR_PATH)
-# cascade_path='haarcascade_frontalface_default.xml'
-# cascade = cv2.CascadeClassifier(cascade_path)
 detector = dlib.get_frontal_face_detector()
 
 
@@ -41,7 +47,6 @@ def top_lip(landmarks):
         top_lip_pts.append(landmarks[i])
     for i in range(61, 64):
         top_lip_pts.append(landmarks[i])
-    top_lip_all_pts = np.squeeze(np.asarray(top_lip_pts))
     top_lip_mean = np.mean(top_lip_pts, axis=0)
     return int(top_lip_mean[:, 1])
 
@@ -52,7 +57,6 @@ def bottom_lip(landmarks):
         bottom_lip_pts.append(landmarks[i])
     for i in range(56, 59):
         bottom_lip_pts.append(landmarks[i])
-    bottom_lip_all_pts = np.squeeze(np.asarray(bottom_lip_pts))
     bottom_lip_mean = np.mean(bottom_lip_pts, axis=0)
     return int(bottom_lip_mean[:, 1])
 
@@ -69,14 +73,8 @@ def mouth_open(image):
     lip_distance = abs(top_lip_center - bottom_lip_center)
     return image_with_landmarks, lip_distance
 
-    # cv2.imshow('Result', image_with_landmarks)
-    # cv2.imwrite('image_with_landmarks.jpg',image_with_landmarks)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
-
 
 cap = cv2.VideoCapture(0)
-yawns = 0
 yawn_status = False
 
 start = datetime
@@ -90,30 +88,24 @@ while True:
     if lip_distance > 25:
         yawn_status = True
 
-        cv2.putText(frame, "Subject is Yawning", (50, 450),
-                    cv2.FONT_HERSHEY_COMPLEX, 1, (0, 0, 255), 2)
-
-        output_text = " Yawn Count: " + str(yawns + 1)
-
-        cv2.putText(frame, output_text, (50, 50),
-                    cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 127), 2)
-
     else:
         yawn_status = False
 
-
     if prev_yawn_status == True and yawn_status == False:
-        yawns += 1
-        start = datetime.now()#.timestamp()
+        start = datetime.now()
         if end != 0 and abs(end.minute - start.minute) < 1:
+            ts = time.time()
+            timestamp = datetime.now()
+            cur.execute("INSERT INTO data VALUES ('Drowsy', CURRENT_TIMESTAMP)")
+            conn.commit()
             n.show_toast("You keep yawning!", "Coffee? :^)", duration=5)
-        end = datetime.now()#.timestamp()
+        end = datetime.now()
 
-    # cv2.imshow('Live Landmarks', image_landmarks)
-    #cv2.imshow('Yawn Detection', frame)
+    # cv2.imshow('Yawn Detection', frame)
 
     if cv2.waitKey(1) == 13:  # 13 is the Enter Key
         break
 
+conn.close()
 cap.release()
-cv2.destroyAllWindows() 
+cv2.destroyAllWindows()

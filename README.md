@@ -5,6 +5,7 @@ Summary:
 Facial recognition app, our implementation will include recognizing when someone
 is fatigued and recommending a break or a coffee with a popup notification. 
 We will use opencv to use the webcam.
+Includes a database to track events and times.
 
 Potential:
 This app could be further developped to include other possiblilities such as 
@@ -17,4 +18,5 @@ The program could also track when the user is most productive and most fatigued
 and could recommend when to start work and when to leave for a flexible schedule.
 For example someone who is more fatigued early in the day could potentially work 
 night shifts. 
+
 
