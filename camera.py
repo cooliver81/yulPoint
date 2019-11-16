@@ -1,10 +1,11 @@
 import cv2
 import dlib
 import numpy as np
+from datetime import datetime
 from win10toast import ToastNotifier
 
 n = ToastNotifier()
-#n.show_toast("You keep yawning!", "Coffee? :^)", duration=10, icon_path="C:\\Users\\Dylan\\Desktop\\YUL\\images\\coffee.ico")
+# n.show_toast("You keep yawning!", "Coffee? :^)", duration=10,)
 
 PREDICTOR_PATH = "shape_predictor_68_face_landmarks.dat"
 predictor = dlib.shape_predictor(PREDICTOR_PATH)
@@ -15,7 +16,6 @@ detector = dlib.get_frontal_face_detector()
 
 def get_landmarks(im):
     rects = detector(im, 1)
-
     if len(rects) > 1:
         return "error"
     if len(rects) == 0:
@@ -79,6 +79,8 @@ cap = cv2.VideoCapture(0)
 yawns = 0
 yawn_status = False
 
+start = datetime
+end = datetime
 while True:
     ret, frame = cap.read()
     image_landmarks, lip_distance = mouth_open(frame)
@@ -99,8 +101,14 @@ while True:
     else:
         yawn_status = False
 
+
     if prev_yawn_status == True and yawn_status == False:
         yawns += 1
+        start = datetime.now()#.timestamp()
+        if end != 0 and end.total_seconds() - start.total_seconds() < 60.0:
+            print(start, end, abs(end.total_seconds() - start.total_seconds()))
+            n.show_toast("You keep yawning!", "Coffee? :^)", duration=5)
+        end = datetime.now()#.timestamp()
 
     # cv2.imshow('Live Landmarks', image_landmarks)
     cv2.imshow('Yawn Detection', frame)
