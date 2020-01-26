@@ -69,6 +69,14 @@ def mouth_open(image):
     lip_distance = abs(top_lip_center - bottom_lip_center)
     return image_with_landmarks, lip_distance
 
+def get_data():
+    sql_select_Query = "select * from data"
+    cur.execute(sql_select_Query)
+    records = cur.fetchall()
+    for row in records:
+        print("Type: ", row[0], )
+        print("Date: ", row[1], "\n")
+
 class window_design:
     def __init__(self):
         window = Tk()
@@ -78,7 +86,7 @@ class window_design:
         label_Name = Label(window, text="YawnCam", bg="darkgrey", font=("Arial Bold", 30))
         button_Start = Button(window, text="Start", font=("Arial", 20), height=2, width=10, command=self.main)
         button_Stop = Button(window, text="Stop", font=("Arial", 20), height=2, width=10, command=self.stop)
-        button_Stats = Button(window, text="Stats", font=("Arial", 20), height=2, width=10)
+        button_Stats = Button(window, text="Stats", font=("Arial", 20), height=2, width=10, command=self.get_data)
         label_Buffer1 = Label(window, bg="darkgrey")
         label_Buffer2 = Label(window, bg="darkgrey")
         label_Buffer3 = Label(window, bg="darkgrey")
