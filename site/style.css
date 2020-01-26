@@ -1,0 +1,50 @@
+body {
+    background-color: rgb(0, 0, 0);
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.grid-container {
+    display: grid;
+    justify-content: center;
+    grid-template-columns: auto auto auto;
+    padding: 10px;
+    font-size: 30px;
+    text-align: center;
+    grid-gap: 70px;
+}
+
+.grid-item {
+    background-color: rgb(121, 121, 121);
+    width: 100%;
+    font-size: 30px;
+    padding:20px;
+}
+
+.grid-item:hover {
+    background-color: rgb(83, 83, 83);
+}
+
+#title {
+    width: 100%;
+    text-align: center;
+    width: 100%;
+    font-size: 60px;
+    font-style: italic;
+    color: rgb(8, 255, 8);
+}
+
+#start {
+    background-color: rgb(34, 145, 0);
+}
+
+#start:hover {
+    background-color: rgb(26, 112, 0);
+}
+
+#stop {
+    background-color: rgb(168, 0, 0);
+}
+
+#stop:hover {
+    background-color: rgb(129, 0, 0);
+}
